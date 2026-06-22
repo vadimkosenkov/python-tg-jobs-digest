@@ -15,7 +15,16 @@ An automated Python script that aggregates job postings from selected Telegram c
 
 The script uses **Telethon** (Telegram Client API) running as a Userbot. It does not run 24/7; instead, it is triggered once a day by GitHub Actions, processes the channels, sends the message, and shuts down.
 
-[Telegram Channels] ──> [GitHub Actions (Cron)] ──> [Keyword Filter & Dedup] ──> [Your Saved Messages]│▲▼│ (State Tracking)[GitHub Artifacts]
+```mermaid
+graph LR
+    A[Telegram Channels] --> B[GitHub Actions]
+    B --> C{Filter & Dedup}
+    C --> D[Saved Messages]
+    B <--> E[(GitHub Artifacts)]
+    
+    style B fill:#24292e,stroke:#fff,stroke-width:2px,color:#fff
+    style E fill:#0366d6,stroke:#fff,stroke-width:1px,color:#fff
+```
 
 ---
 
