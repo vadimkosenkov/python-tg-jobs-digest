@@ -167,7 +167,7 @@ async def main() -> None:
                 seen_hashes.add(h)
 
                 username = getattr(entity, "username", None)
-                link = f"https://t.me{username}/{message.id}" if username else None
+                link = f"https://t.me/{username}/{message.id}" if username else None
                 found.append((entity.title or channel, link, text.strip()))
         except Exception as exc:
             print(f"[!] Не получилось обработать канал '{channel}': {exc}", file=sys.stderr)
