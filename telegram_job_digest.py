@@ -52,15 +52,17 @@ if 'TG_STATE_BASE64' in os.environ:
 # Каналы для мониторинга — юзернеймы без "@" (для приватных каналов нужно
 # быть участником; для публичных — username работает в любом случае)
 CHANNELS = [
-    "itvacancykz",
-    "jtbl_vacancy",
-    "Remoteit",
-    "rocket_tech_jobs",
-    "workitkz",
-    "opento_dev",
-    "Relocats",
-    "opento_cyprus",
-    "jsgurujobs",
+    "itvacancykz", #ITvacancy KZ & UZ
+    "jtbl_vacancy", #JTBL | Вакансии для IT-специалистов
+    "Remoteit", #Remote IT (Inflow)
+    "rocket_tech_jobs", #Rocket Jobs: IT-работа в Казахстане и удалённо
+    "workitkz", #IT Вакансии Казахстан
+    "opento_dev", #Dev Jobs - ✈️ вакансии за рубежом
+    "Relocats", #IT Relocation (Inflow)
+    "opento_cyprus", #Cyprus Jobs - проверенные вакансии на Кипре
+    "jsgurujobs", #SGuruJobs
+    "careers_digital", #CC | Вакансии, Работа
+    "jsdevjob" #Javascript jobs
 ]
 
 # Ключевые слова, без учёта регистра. Поиск подстрокой, так что "python"
@@ -71,6 +73,7 @@ KEYWORDS = [
     "frontend",
     "front-end",
     "angular",
+    "react"
 ]
 
 # Сколько часов назад смотреть при самом первом запуске.
