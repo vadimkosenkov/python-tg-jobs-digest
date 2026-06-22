@@ -1,0 +1,48 @@
+name: Run Telegram Job Digest
+
+on:
+  schedule:
+    # Запуск каждый день в 09:00 по UTC (12:00 по МСК/Минску)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Позволяет запускать скрипт вручную кнопкой
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install telethon python-dotenv
+
+      # 1. Скачиваем файл состояния с прошлого запуска (если он уже создавался)
+      - name: Download Previous State
+        uses: actions/download-artifact@v4
+        with:
+          name: job-state
+          path: .
+        continue-on-error: true # Если это первый запуск и файла еще нет — идем дальше
+
+      # 2. Запуск вашего Python скрипта (передаем только скрытые доступы к аккаунту)
+      - name: Run Digest Script
+        env:
+          TG_SESSION_BASE64: ${{ secrets.TG_SESSION_BASE64 }}
+          TG_API_ID: ${{ secrets.TG_API_ID }}
+          TG_API_HASH: ${{ secrets.TG_API_HASH }}
+          TG_PHONE: ${{ secrets.TG_PHONE }}
+        run: python3 telegram_job_digest.py
+
+      # 3. GitHub сам берет обновленный файл job_digest_state.json и прячет его на 90 дней
+      - name: Upload Current State
+        uses: actions/upload-artifact@v4
+        with:
+          name: job-state
+          path: job_digest_state.json
+          retention-days: 90

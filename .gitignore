@@ -1,0 +1,6 @@
+*.session
+*.json
+*_base64.txt
+
+.idea
+.env
