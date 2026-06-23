@@ -38,6 +38,8 @@ load_dotenv()
 API_ID = int(os.environ.get('TG_API_ID'))
 API_HASH = os.environ.get('TG_API_HASH')
 PHONE = os.environ.get('TG_PHONE')
+BOT_TOKEN = os.environ.get('TG_BOT_TOKEN')
+TG_USER_ID = int(os.environ.get('TG_USER_ID'))
 
 # Восстанавливаем сессию из секретов GitHub (если мы в облаке)
 if 'TG_SESSION_BASE64' in os.environ:
@@ -178,17 +180,36 @@ async def main() -> None:
     if found:
         parts = []
         for title, link, text in found:
-            snippet = text if len(text) <= 600 else text[:600] + "…"
-            header = f"📌 {title}" + (f" — {link}" if link else "")
-            parts.append(f"{header}\n{snippet}")
+            snippet = text if len(text) <= 250 else text[:250].strip() + "…"
 
-        digest_header = f"🗞 Дайджест вакансий за {local_time_str} — найдено: {len(found)}"
-        for chunk in make_chunks([digest_header] + parts):
-            await client.send_message("me", chunk, link_preview=False)
+            if link:
+                header = f"📌 **[{title}]({link})**"
+            else:
+                header = f"📌 **{title}**"
+
+            parts.append(f"{header}\n{snippet}\n\n───────────────────")
+
+        digest_header = f"🗞 **Дайджест вакансий за {local_time_str}** — найдено: {len(found)}\n"
+
+        # Инициализируем клиента бота без файлов сессии на диске
+        bot = TelegramClient('bot_session', API_ID, API_HASH)
+        try:
+            # В Telethon 1.x метод start() для ботов вызывается именно так:
+            await bot.start(bot_token=BOT_TOKEN)
+            for chunk in make_chunks([digest_header] + parts):
+                await bot.send_message(TG_USER_ID, chunk, link_preview=False, parse_mode="md")
+        finally:
+            # Блок finally гарантирует выполнение disconnect() при любом исходе
+            await bot.disconnect()
     else:
-        await client.send_message(
-            "me", f"🗞 Дайджест вакансий за {local_time_str}: за этот период ничего по ключевым словам не нашлось."
-        )
+        bot = TelegramClient('bot_session', API_ID, API_HASH)
+        try:
+            await bot.start(bot_token=BOT_TOKEN)
+            await bot.send_message(
+                TG_USER_ID, f"🗞 Дайджест вакансий за {local_time_str}: за этот период ничего по ключевым словам не нашлось."
+            )
+        finally:
+            await bot.disconnect()
 
     # Сохраняем состояние для следующего запуска
     state["last_run"] = datetime.now(timezone.utc).isoformat()
