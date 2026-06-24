@@ -77,4 +77,4 @@ python3 telegram_job_digest.py
 4. Go to **Settings** -> **Actions** -> **General** -> **Workflow permissions**, select **Read and write permissions**, and save.
 5. Push `telegram_job_digest.py`, `.github/workflows/run_digest.yml`, and `.gitignore` to your repository.
 
-The workflow is pre-configured to run automatically every day at **09:27 UTC** (12:27 MSK/Minsk) to avoid server high-traffic hours. You can also trigger it manually anytime using the **"Run workflow"** button in the Actions tab.
+The workflow is pre-configured to run automatically every day at **04:59 UTC** (07:59 MSK/Minsk) to avoid server high-traffic hours. You can also trigger it manually anytime using the **"Run workflow"** button in the Actions tab.
