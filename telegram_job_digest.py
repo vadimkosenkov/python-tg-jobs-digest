@@ -105,7 +105,13 @@ def matches_keywords(text: str) -> bool:
     if not text:
         return False
     low = text.lower()
-    return any(kw.lower() in low for kw in KEYWORDS)
+    for kw in KEYWORDS:
+        # The pattern searches for the entire keyword, preventing it from being matched
+        # inside long words or links (e.g., /frontend/ in a URL)
+        pattern = r'(?:^|[^a-zA-Z0-9а-яА-ЯёЁ\-])' + re.escape(kw.lower()) + r'(?:$|[^a-zA-Z0-9а-яА-ЯёЁ\-])'
+        if re.search(pattern, low):
+            return True
+    return False
 
 def dedup_key(text: str) -> str:
     """Generate a unique MD5 hash from the first N words of the text."""
