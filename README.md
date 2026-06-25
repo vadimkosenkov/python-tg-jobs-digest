@@ -1,6 +1,8 @@
 # Telegram Job Digest Bot
 
 An automated Python script that aggregates job postings from selected Telegram channels, filters them by specific frontend keywords (Angular, React, etc.), removes duplicates, and sends a clean daily digest via a dedicated Telegram **Bot** directly to your personal chat account, keeping your "Saved Messages" clean.
+<img width="1001" height="636" alt="image" src="https://github.com/user-attachments/assets/ed6ddc25-956c-44ee-80f3-d3d21bd2014d" />
+
 
 ## Key Features
 * **Smart Filtering:** Matches jobs based on precise keywords.
