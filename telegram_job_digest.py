@@ -65,7 +65,9 @@ CHANNELS = [
     "opento_cyprus", #Cyprus Jobs - проверенные вакансии на Кипре
     "jsgurujobs", #SGuruJobs
     "careers_digital", #CC | Вакансии, Работа
-    "jsdevjob" #Javascript jobs
+    "jsdevjob", #Javascript jobs
+    "itjobsgeorgia", #Tech Jobs Georgia
+    "it_jobs_georgia" #T-Jobs Georgia | IT вакансии в Грузии
 ]
 
 # Keywords for filtering (case-insensitive substring search)
