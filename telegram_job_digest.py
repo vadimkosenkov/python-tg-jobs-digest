@@ -192,20 +192,20 @@ async def main() -> None:
             snippet = text if len(text) <= 250 else text[:250].strip() + "…"
 
             if link:
-                header = f"📌 **[{title}]({link})**"
+                header = f"📌 <b><a href='{link}'>{title}</a></b>"
             else:
-                header = f"📌 **{title}**"
+                header = f"📌 <b>{title}</b>"
 
             parts.append(f"{header}\n{snippet}\n\n───────────────────")
 
-        digest_header = f"🗞 **Job digest for {local_time_str}** — found: {len(found)}\n"
+        digest_header = f"🗞 <b>Job digest for {local_time_str}</b> — found: {len(found)}\n"
 
         # Initialize bot and send the formatted text blocks
         bot = TelegramClient('bot_session', API_ID, API_HASH)
         try:
             await bot.start(bot_token=BOT_TOKEN)
             for chunk in make_chunks([digest_header] + parts):
-                await bot.send_message(TG_USER_ID, chunk, link_preview=False, parse_mode="md")
+                await bot.send_message(TG_USER_ID, chunk, link_preview=False, parse_mode="html")
         finally:
             await bot.disconnect()
     else:
