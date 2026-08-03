@@ -76,8 +76,7 @@ KEYWORDS = [
     "front",
     "frontend",
     "front-end",
-    "angular",
-    "react"
+    "angular"
 ]
 
 LOOKBACK_HOURS = 24  # Time window for the very first execution
