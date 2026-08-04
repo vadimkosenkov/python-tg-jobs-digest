@@ -68,6 +68,7 @@ CHANNELS = [
     "jsdevjob", #Javascript jobs
     "itjobsgeorgia", #Tech Jobs Georgia
     "it_jobs_georgia" #T-Jobs Georgia | IT вакансии в Грузии
+    "jobsearchhhhh" #Вакансии IT (СНГ, ЕС, Весь Мир)
 ]
 
 # Keywords for filtering (case-insensitive substring search)
