@@ -71,7 +71,17 @@ CHANNELS = [
     "jobsearchhhhh", #Вакансии IT (СНГ, ЕС, Весь Мир)
     "frontend_vakansii", #Frontend | Вакансии
     "visa_sponsored_jobss", #Visa sponsored jobs+ resources
-    "Pol_relocation" #IT СV: Poland Relocation
+    "Pol_relocation", #IT СV: Poland Relocation
+    "cyprusithr", #CY iT HR
+    "it_vakansii_jobs", #СЕТИ — IT & Digital вакансии
+    "rabotafrontend", #FrontEnd Работа
+    "WorkingDubai", #РАБОТА В ДУБАЕ | ВАКАНСИИ В ОАЭ
+    "jobsarm", #Работа в Армении
+    "clickjobsuz", #Click Jobs - IT Jobs
+    "it_remote", #Удаленная работа в IT
+    "program_job", #Работа для программиста | IT вакансии
+    "hot_itjobs", #<HOT IT JOBS>: developers, programmers, sysadmins
+    "epamkazakhstan", #EPAM Kazakhstan
 ]
 
 # Keywords for filtering (case-insensitive substring search)
