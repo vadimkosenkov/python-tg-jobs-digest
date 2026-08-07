@@ -67,8 +67,11 @@ CHANNELS = [
     "careers_digital", #CC | Вакансии, Работа
     "jsdevjob", #Javascript jobs
     "itjobsgeorgia", #Tech Jobs Georgia
-    "it_jobs_georgia" #T-Jobs Georgia | IT вакансии в Грузии
-    "jobsearchhhhh" #Вакансии IT (СНГ, ЕС, Весь Мир)
+    "it_jobs_georgia", #T-Jobs Georgia | IT вакансии в Грузии
+    "jobsearchhhhh", #Вакансии IT (СНГ, ЕС, Весь Мир)
+    "frontend_vakansii", #Frontend | Вакансии
+    "visa_sponsored_jobss", #Visa sponsored jobs+ resources
+    "Pol_relocation" #IT СV: Poland Relocation
 ]
 
 # Keywords for filtering (case-insensitive substring search)
@@ -77,7 +80,12 @@ KEYWORDS = [
     "front",
     "frontend",
     "front-end",
-    "angular"
+    "angular",
+    "typescript",
+    "ionic",
+    "веб-разработчик",
+    "web developer",
+    "ui developer"
 ]
 
 LOOKBACK_HOURS = 24  # Time window for the very first execution
@@ -169,6 +177,10 @@ async def main() -> None:
                     break  # All subsequent posts are older, stop loop for this channel
 
                 text = message.text or ""
+                # For Pol_relocation channel — only accept messages that include the specific group link
+                if channel.lower() == "pol_relocation":
+                    if "https://t.me/c/Pol_relocation/36109".lower() not in (text or "").lower():
+                        continue
                 if not matches_keywords(text):
                     continue
 
