@@ -83,6 +83,7 @@ CHANNELS = [
     "hot_itjobs", #<HOT IT JOBS>: developers, programmers, sysadmins
     "epamkazakhstan", #EPAM Kazakhstan
     "devkz_jobs", #Dev KZ | Vacancy
+    "olgaitvacancies", #Olga IT Vacancies
 ]
 
 # Keywords for filtering (case-insensitive substring search)
