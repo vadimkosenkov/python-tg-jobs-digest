@@ -72,6 +72,7 @@ CHANNELS = [
     "frontend_vakansii", #Frontend | Вакансии
     "visa_sponsored_jobss", #Visa sponsored jobs+ resources
     "Pol_relocation", #IT СV: Poland Relocation
+    "cyprusithr", #CY iT HR
     "it_vakansii_jobs", #СЕТИ — IT & Digital вакансии
     "rabotafrontend", #FrontEnd Работа
     "WorkingDubai", #РАБОТА В ДУБАЕ | ВАКАНСИИ В ОАЭ
@@ -117,6 +118,15 @@ EXCLUDE_KEYWORDS = [
 
 LOOKBACK_HOURS = 24  # Time window for the very first execution
 DEDUP_WORDS = 12  # Number of initial words used for deduplication
+
+# Some monitored channels are forum-enabled supergroups where jobs live in
+# specific topics alongside unrelated chat, or split across several topics.
+# For those, restrict scanning to just the listed topic IDs so off-topic
+# chatter never reaches the keyword filters.
+CHANNEL_TOPIC_IDS = {
+    "pol_relocation": [36109],  # "Vacancies & CVs" topic in IT CV: Poland Relocation
+    "cyprusithr": [46685, 46679],  # vacancy topics in CY iT HR (general + Cyprus-based roles)
+}
 
 SESSION_NAME = "job_digest_session"
 STATE_FILE = Path("job_digest_state.json")
@@ -208,33 +218,38 @@ async def main() -> None:
     for channel in CHANNELS:
         try:
             entity = await client.get_entity(channel)
-            # Scan from newest to oldest. Stop when we reach the date of the last run.
-            async for message in client.iter_messages(entity, limit=100):
-                msg_date = message.date
-                if msg_date.tzinfo is None:
-                    msg_date = msg_date.replace(tzinfo=timezone.utc)
+            username = getattr(entity, "username", None)
+            # None means "no topic restriction" (regular channel or whole forum)
+            topic_ids = CHANNEL_TOPIC_IDS.get(channel.lower(), [None])
 
-                if msg_date <= since:
-                    break  # All subsequent posts are older, stop loop for this channel
+            for topic_id in topic_ids:
+                # Scan from newest to oldest. Stop when we reach the date of the last run.
+                async for message in client.iter_messages(entity, limit=100, reply_to=topic_id):
+                    msg_date = message.date
+                    if msg_date.tzinfo is None:
+                        msg_date = msg_date.replace(tzinfo=timezone.utc)
 
-                text = message.text or ""
-                # For Pol_relocation channel — only accept messages that include the specific group link
-                if channel.lower() == "pol_relocation":
-                    if "https://t.me/c/Pol_relocation/36109".lower() not in (text or "").lower():
+                    if msg_date <= since:
+                        break  # All subsequent posts are older, stop loop for this topic
+
+                    text = message.text or ""
+                    if is_excluded(text):
                         continue
-                if is_excluded(text):
-                    continue
-                if not matches_keywords(text):
-                    continue
+                    if not matches_keywords(text):
+                        continue
 
-                h = dedup_key(text)
-                if h in seen_hashes:
-                    continue
-                seen_hashes.add(h)
+                    h = dedup_key(text)
+                    if h in seen_hashes:
+                        continue
+                    seen_hashes.add(h)
 
-                username = getattr(entity, "username", None)
-                link = f"https://t.me/{username}/{message.id}" if username else None
-                found.append((entity.title or channel, link, text.strip()))
+                    if username and topic_id:
+                        link = f"https://t.me/{username}/{topic_id}/{message.id}"
+                    elif username:
+                        link = f"https://t.me/{username}/{message.id}"
+                    else:
+                        link = None
+                    found.append((entity.title or channel, link, text.strip()))
         except Exception as exc:
             print(f"[!] Failed to process channel '{channel}': {exc}", file=sys.stderr)
 
