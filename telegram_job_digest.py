@@ -164,6 +164,12 @@ def dedup_key(text: str) -> str:
     words = normalized.with_suffix('').name.split()[:DEDUP_WORDS] if hasattr(normalized, 'with_suffix') else normalized.split()[:DEDUP_WORDS]
     return hashlib.md5(" ".join(words).encode("utf-8")).hexdigest()
 
+KEYCAP_DIGITS = {str(d): f"{d}️⃣" for d in range(10)}
+
+def number_emoji(n: int) -> str:
+    """Render a positive integer as a sequence of keycap digit emoji (1️⃣, 2️⃣, … 1️⃣0️⃣, …)."""
+    return "".join(KEYCAP_DIGITS[d] for d in str(n))
+
 def make_chunks(parts: list[str], limit: int = 3900) -> list[str]:
     """Split a list of strings into text blocks within the Telegram character limit."""
     chunks: list[str] = []
@@ -236,18 +242,32 @@ async def main() -> None:
     local_time_str = datetime.now(timezone.utc).astimezone().strftime('%d.%m.%Y %H:%M')
 
     if found:
-        parts = []
-        for title, link, text in found:
+        item_separator = "▫️" * 13
+        job_blocks = []
+        for idx, (title, link, text) in enumerate(found, start=1):
             snippet = text if len(text) <= 250 else text[:250].strip() + "…"
+            number = number_emoji(idx)
 
             if link:
-                header = f"📌 <b><a href='{link}'>{title}</a></b>"
+                header = f"{number} 📌 <b><a href='{link}'>{title}</a></b>"
             else:
-                header = f"📌 <b>{title}</b>"
+                header = f"{number} 📌 <b>{title}</b>"
 
-            parts.append(f"{header}\n{snippet}\n\n───────────────────")
+            job_blocks.append(f"{header}\n{snippet}")
 
-        digest_header = f"🗞 <b>Job digest for {local_time_str}</b> — found: {len(found)}\n"
+        # Join blocks with a separator, but skip it after the last one
+        parts = [
+            block if idx == len(job_blocks) - 1 else f"{block}\n\n{item_separator}"
+            for idx, block in enumerate(job_blocks)
+        ]
+
+        banner_line = "🗞" + "━" * 20 + "🗞"
+        digest_header = (
+            f"{banner_line}\n"
+            f"<b>JOB DIGEST</b>\n"
+            f"{local_time_str} · Найдено: {len(found)}\n"
+            f"{banner_line}"
+        )
 
         # Initialize bot and send the formatted text blocks
         bot = TelegramClient('bot_session', API_ID, API_HASH)
