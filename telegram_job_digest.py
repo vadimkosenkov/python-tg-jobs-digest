@@ -82,6 +82,7 @@ CHANNELS = [
     "program_job", #Работа для программиста | IT вакансии
     "hot_itjobs", #<HOT IT JOBS>: developers, programmers, sysadmins
     "epamkazakhstan", #EPAM Kazakhstan
+    "devkz_jobs", #Dev KZ | Vacancy
 ]
 
 # Keywords for filtering (case-insensitive substring search)
