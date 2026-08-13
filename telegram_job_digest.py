@@ -72,7 +72,6 @@ CHANNELS = [
     "frontend_vakansii", #Frontend | Вакансии
     "visa_sponsored_jobss", #Visa sponsored jobs+ resources
     "Pol_relocation", #IT СV: Poland Relocation
-    "cyprusithr", #CY iT HR
     "it_vakansii_jobs", #СЕТИ — IT & Digital вакансии
     "rabotafrontend", #FrontEnd Работа
     "WorkingDubai", #РАБОТА В ДУБАЕ | ВАКАНСИИ В ОАЭ
@@ -87,15 +86,33 @@ CHANNELS = [
 # Keywords for filtering (case-insensitive substring search)
 KEYWORDS = [
     "фронтенд",
-    "front",
     "frontend",
     "front-end",
     "angular",
+    "ангуляр",
     "typescript",
-    "ionic",
     "веб-разработчик",
     "web developer",
     "ui developer"
+]
+
+# Keywords that mark a post as a candidate's resume/CV rather than a job
+# opening. Any message matching one of these is skipped, even if it also
+# matches KEYWORDS above (e.g. a resume listing "Frontend" as a skill).
+EXCLUDE_KEYWORDS = [
+    "#resume",
+    "#cv",
+    "#резюме",
+    "резюме",
+    "#ищу",
+    "ищу работу",
+    "ищу вакансию",
+    "ищу проект",
+    "в поиске работы",
+    "в поиске проекта",
+    "seeking a job",
+    "looking for a job",
+    "open to work",
 ]
 
 LOOKBACK_HOURS = 24  # Time window for the very first execution
@@ -120,18 +137,26 @@ def save_state(state: dict) -> None:
     """Save the current execution state to the JSON file."""
     STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
 
-def matches_keywords(text: str) -> bool:
-    """Check if the job posting text contains any configured keywords."""
+def contains_any(text: str, keywords: list[str]) -> bool:
+    """Check if the text contains any of the given keywords as a whole word."""
     if not text:
         return False
     low = text.lower()
-    for kw in KEYWORDS:
+    for kw in keywords:
         # The pattern searches for the entire keyword, preventing it from being matched
         # inside long words or links (e.g., /frontend/ in a URL)
         pattern = r'(?:^|[^a-zA-Z0-9а-яА-ЯёЁ\-])' + re.escape(kw.lower()) + r'(?:$|[^a-zA-Z0-9а-яА-ЯёЁ\-])'
         if re.search(pattern, low):
             return True
     return False
+
+def matches_keywords(text: str) -> bool:
+    """Check if the job posting text contains any configured keywords."""
+    return contains_any(text, KEYWORDS)
+
+def is_excluded(text: str) -> bool:
+    """Check if the text looks like a candidate's resume/CV post rather than a job opening."""
+    return contains_any(text, EXCLUDE_KEYWORDS)
 
 def dedup_key(text: str) -> str:
     """Generate a unique MD5 hash from the first N words of the text."""
@@ -191,6 +216,8 @@ async def main() -> None:
                 if channel.lower() == "pol_relocation":
                     if "https://t.me/c/Pol_relocation/36109".lower() not in (text or "").lower():
                         continue
+                if is_excluded(text):
+                    continue
                 if not matches_keywords(text):
                     continue
 
