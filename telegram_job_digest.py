@@ -131,6 +131,12 @@ CHANNEL_TOPIC_IDS = {
 }
 
 SESSION_NAME = "job_digest_session"
+# Shown in Telegram → Settings → Devices, so the session is recognisable as this script
+DEVICE_INFO = {
+    "device_model": "Jobs Digest (GitHub Actions)",
+    "system_version": "python-tg-jobs-digest",
+    "app_version": "1.0",
+}
 STATE_FILE = Path("job_digest_state.json")
 
 # ────────────────────────────────────────────────────────────
@@ -212,7 +218,7 @@ async def main() -> None:
     else:
         since = datetime.now(timezone.utc) - timedelta(hours=LOOKBACK_HOURS)
 
-    client = TelegramClient(SESSION_NAME, API_ID, API_HASH)
+    client = TelegramClient(SESSION_NAME, API_ID, API_HASH, **DEVICE_INFO)
     await client.start(phone=PHONE)
 
     found: list[tuple[str, str | None, str]] = []
