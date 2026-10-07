@@ -88,15 +88,15 @@ CHANNELS = [
 
 # Keywords for filtering (case-insensitive substring search)
 KEYWORDS = [
-    "фронтенд",
-    "frontend",
-    "front-end",
+    # "фронтенд",
+    # "frontend",
+    # "front-end",
     "angular",
     "ангуляр",
-    "typescript",
-    "веб-разработчик",
-    "web developer",
-    "ui developer"
+    # "typescript",
+    # "веб-разработчик",
+    # "web developer",
+    # "ui developer"
 ]
 
 # Keywords that mark a post as a candidate's resume/CV rather than a job
