@@ -9,6 +9,9 @@ on:
 jobs:
   run-script:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read # нужно, чтобы скачать артефакт прошлого запуска
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
@@ -22,13 +25,22 @@ jobs:
         run: |
           pip install telethon python-dotenv
 
-      # 1. Скачиваем файл состояния с прошлого запуска (если он уже создавался)
+      # 1. Скачиваем файл состояния из последнего успешного запуска
+      # (download-artifact без run-id ищет только в текущем запуске, где файла еще нет)
       - name: Download Previous State
-        uses: actions/download-artifact@v4
-        with:
-          name: job-state
-          path: .
-        continue-on-error: true # Если это первый запуск и файла еще нет — идем дальше
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          run_id=$(gh run list --workflow "$GITHUB_WORKFLOW" --status success --limit 1 --json databaseId --jq '.[0].databaseId')
+          if [ -z "$run_id" ]; then
+            echo "No previous successful run — starting with an empty state"
+            exit 0
+          fi
+          echo "Restoring state from run $run_id"
+          gh run download "$run_id" --name job-state --dir .
+          head -c 300 job_digest_state.json
+        continue-on-error: true # Если артефакт истек или недоступен — идем дальше с пустым состоянием
 
       # 2. Запуск вашего Python скрипта (передаем только скрытые доступы к аккаунту)
       - name: Run Digest Script
