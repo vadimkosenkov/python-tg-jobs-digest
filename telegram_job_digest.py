@@ -84,6 +84,8 @@ CHANNELS = [
     "epamkazakhstan", #EPAM Kazakhstan
     "devkz_jobs", #Dev KZ | Vacancy
     "olgaitvacancies", #Olga IT Vacancies
+    "serbia_jobs", #Serbia IT Jobs [RU/UA/ENG]
+    "it_jobs_serbia" #IT-Jobs Serbia | IT вакансии в Сербии
 ]
 
 # Keywords for filtering (case-insensitive substring search)
