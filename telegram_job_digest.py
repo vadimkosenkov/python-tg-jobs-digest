@@ -69,7 +69,7 @@ CHANNELS = [
     "itjobsgeorgia", #Tech Jobs Georgia
     "it_jobs_georgia", #T-Jobs Georgia | IT вакансии в Грузии
     "jobsearchhhhh", #Вакансии IT (СНГ, ЕС, Весь Мир)
-    "frontend_vakansii", #Frontend | Вакансии
+    "frontend_jobs_vakansii", #Frontend Jobs | Вакансии
     "visa_sponsored_jobss", #Visa sponsored jobs+ resources
     "Pol_relocation", #IT СV: Poland Relocation
     "cyprusithr", #CY iT HR
